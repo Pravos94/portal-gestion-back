@@ -1,4 +1,7 @@
 com\unir\poyecto\repository\UsuarioRepository.class
 com\unir\poyecto\PortalGestionBackApplication.class
 com\unir\poyecto\model\Usuario.class
+com\unir\poyecto\controller\EmpleadoController.class
+com\unir\poyecto\model\Empleado.class
+com\unir\poyecto\repository\EmpleadoRepository.class
 com\unir\poyecto\controller\UsuarioController.class
