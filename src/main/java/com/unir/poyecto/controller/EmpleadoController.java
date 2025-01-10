@@ -1,6 +1,7 @@
 package com.unir.poyecto.controller;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -37,6 +38,14 @@ public class EmpleadoController {
 		return new ResponseEntity<>(empleados, HttpStatus.OK);
 	}
 
+	@GetMapping("/{id}")
+	public ResponseEntity<Empleado> obtenerEmpleado(@PathVariable Long id) {
+
+		Optional<Empleado> empleado = empleadoRepository.findById(id);
+
+		return empleado.map(ResponseEntity::ok).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+	}
+
 	@PostMapping("/new")
 	public ResponseEntity<Empleado> crearEmpleado(@RequestBody EmpleadoDTO empleadoDTO) {
 
@@ -58,7 +67,7 @@ public class EmpleadoController {
 		return ResponseEntity.ok(empleadoActualizado);
 
 	}
-	
+
 	@DeleteMapping("/del/{id}")
 	public ResponseEntity<Void> eliminarEmpleado(@PathVariable Long id) {
 		if (empleadoRepository.existsById(id)) {

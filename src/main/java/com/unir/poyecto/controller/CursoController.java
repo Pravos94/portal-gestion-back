@@ -1,6 +1,7 @@
 package com.unir.poyecto.controller;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -37,6 +38,14 @@ public class CursoController {
 		return cursos.isEmpty() ? new ResponseEntity<>(cursos, HttpStatus.NOT_FOUND)
 				: new ResponseEntity<>(cursos, HttpStatus.OK);
 
+	}
+	
+	@GetMapping("/{id}")
+	public ResponseEntity<Curso> obtenerCurso(@PathVariable Long id) {
+
+		Optional<Curso> proyecto = cursoRepository.findById(id);
+
+		return proyecto.map(ResponseEntity::ok).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
 	}
 
 	@PostMapping("/new")

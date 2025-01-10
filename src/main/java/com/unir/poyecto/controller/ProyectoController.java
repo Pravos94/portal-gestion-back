@@ -1,6 +1,7 @@
 package com.unir.poyecto.controller;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -31,12 +32,16 @@ public class ProyectoController {
 
 	@GetMapping("/all")
 	public ResponseEntity<List<Proyecto>> listarProyectos() {
-
 		List<Proyecto> proyectos = proyectoRepository.findAll();
+		return proyectos.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(proyectos);
+	}
 
-		return proyectos.isEmpty() ? new ResponseEntity<>(proyectos, HttpStatus.NOT_FOUND)
-				: new ResponseEntity<>(proyectos, HttpStatus.OK);
+	@GetMapping("/{id}")
+	public ResponseEntity<Proyecto> obtenerProyecto(@PathVariable Long id) {
 
+		Optional<Proyecto> proyecto = proyectoRepository.findById(id);
+
+		return proyecto.map(ResponseEntity::ok).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
 	}
 
 	@PostMapping("/new")
