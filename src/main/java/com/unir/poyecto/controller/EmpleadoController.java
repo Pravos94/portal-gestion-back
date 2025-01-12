@@ -47,9 +47,10 @@ public class EmpleadoController {
 	}
 
 	@PostMapping("/new")
-	public ResponseEntity<Empleado> crearEmpleado(@RequestBody EmpleadoDTO empleadoDTO) {
+	public ResponseEntity<Empleado> crearEmpleado(@RequestBody Empleado empleado) {
+//		public ResponseEntity<Empleado> crearEmpleado(@RequestBody EmpleadoDTO empleadoDTO) {
 
-		Empleado empleado = EmpleadoMapper.INSTANCE.toEntity(empleadoDTO);
+//		Empleado empleado = EmpleadoMapper.INSTANCE.toEntity(empleadoDTO);
 
 		Empleado empleadoGuardado = empleadoRepository.save(empleado);
 

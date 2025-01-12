@@ -45,9 +45,10 @@ public class ProyectoController {
 	}
 
 	@PostMapping("/new")
-	public ResponseEntity<Proyecto> crearProyecto(@RequestBody ProyectoDTO proyectoDTO) {
+	public ResponseEntity<Proyecto> crearProyecto(@RequestBody Proyecto proyecto) {
+//		public ResponseEntity<Proyecto> crearProyecto(@RequestBody ProyectoDTO proyectoDTO) {
 
-		Proyecto proyecto = ProyectoMapper.INSTANCE.toEntity(proyectoDTO);
+//		Proyecto proyecto = ProyectoMapper.INSTANCE.toEntity(proyectoDTO);
 
 		Proyecto proyectoGuardado = proyectoRepository.save(proyecto);
 

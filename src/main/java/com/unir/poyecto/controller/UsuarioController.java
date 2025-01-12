@@ -1,8 +1,6 @@
 package com.unir.poyecto.controller;
 
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -25,14 +23,14 @@ public class UsuarioController {
 	@Autowired
 	private UsuarioRepository usuarioRepository;
 
-	@GetMapping()
-	public ResponseEntity<List<Usuario>> listarUsuarios() {
-
-		List<Usuario> usuarios = usuarioRepository.findAll().stream().peek(user -> user.setContrasena("*"))
-				.collect(Collectors.toList());
-
-		return new ResponseEntity<List<Usuario>>(usuarios, HttpStatus.OK);
-	}
+//	@GetMapping()
+//	public ResponseEntity<List<Usuario>> listarUsuarios() {
+//
+//		List<Usuario> usuarios = usuarioRepository.findAll().stream().peek(user -> user.setContrasena("*"))
+//				.collect(Collectors.toList());
+//
+//		return new ResponseEntity<List<Usuario>>(usuarios, HttpStatus.OK);
+//	}
 	
 	@GetMapping("/{id}")
 	public ResponseEntity<Usuario> obtenerEmpleado(@PathVariable Long id) {
