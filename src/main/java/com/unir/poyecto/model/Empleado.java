@@ -44,8 +44,8 @@ public class Empleado {
 	@Temporal(TemporalType.DATE)
 	private Date fechaIncorporacion;
 
-	@Column(name = "tipo_foto")
-	private String tipoFoto;
+//	@Column(name = "tipo_foto")
+//	private String tipoFoto;
 
 	@Lob
 	@Column(name = "foto")

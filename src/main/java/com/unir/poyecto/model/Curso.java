@@ -29,8 +29,8 @@ public class Curso {
 	@Column(name = "nombre", nullable = false)
 	private String nombre;
 
-	@Column(name = "tipo_foto")
-	private String tipoFoto;
+//	@Column(name = "tipo_foto")
+//	private String tipoFoto;
 	
 	@Lob
 	@Column(name = "foto")
