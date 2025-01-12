@@ -17,13 +17,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.unir.poyecto.dto.ProyectoDTO;
-import com.unir.poyecto.mapper.ProyectoMapper;
 import com.unir.poyecto.model.Proyecto;
 import com.unir.poyecto.repository.ProyectoRepository;
 
-//@CrossOrigin(origins = "http://localhost:3000")
-@CrossOrigin()
+@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/api/proyecto")
 public class ProyectoController {
@@ -62,10 +59,10 @@ public class ProyectoController {
 	}
 
 	@PutMapping("/edit/{id}")
-	public ResponseEntity<Proyecto> editarProyecto(@PathVariable Long id, @RequestBody ProyectoDTO proyectoDTO) {
+	public ResponseEntity<Proyecto> editarProyecto(@PathVariable Long id, @RequestBody Proyecto proyecto) {
 
-		proyectoDTO.setId(id);
-		Proyecto proyecto = ProyectoMapper.INSTANCE.toEntity(proyectoDTO);
+//		proyectoDTO.setId(id);
+//		Proyecto proyecto = ProyectoMapper.INSTANCE.toEntity(proyectoDTO);
 
 		Proyecto proyectoActualizado = proyectoRepository.save(proyecto);
 

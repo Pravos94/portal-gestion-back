@@ -21,8 +21,7 @@ import com.unir.poyecto.mapper.CursoMapper;
 import com.unir.poyecto.model.Curso;
 import com.unir.poyecto.repository.CursoRepository;
 
-//@CrossOrigin(origins = "http://localhost:3000")
-@CrossOrigin()
+@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/api/curso")
 public class CursoController {
