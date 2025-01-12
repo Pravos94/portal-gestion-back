@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -36,7 +37,7 @@ public class ProyectoController {
 		return proyectos.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(proyectos);
 	}
 
-	@GetMapping("/{id}")
+	@GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Proyecto> obtenerProyecto(@PathVariable Long id) {
 
 		Optional<Proyecto> proyecto = proyectoRepository.findById(id);
@@ -44,11 +45,16 @@ public class ProyectoController {
 		return proyecto.map(ResponseEntity::ok).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
 	}
 
-	@PostMapping("/new")
+	@PostMapping(value = "/new", consumes = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Proyecto> crearProyecto(@RequestBody Proyecto proyecto) {
 //		public ResponseEntity<Proyecto> crearProyecto(@RequestBody ProyectoDTO proyectoDTO) {
 
 //		Proyecto proyecto = ProyectoMapper.INSTANCE.toEntity(proyectoDTO);
+		
+//	    if (proyecto.getFoto() != null) {
+//            byte[] fotoBytes = Base64.getDecoder().decode(proyecto.getFoto());
+//            proyecto.setFoto(fotoBytes);
+//        }
 
 		Proyecto proyectoGuardado = proyectoRepository.save(proyecto);
 

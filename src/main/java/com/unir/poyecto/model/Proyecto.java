@@ -1,6 +1,6 @@
 package com.unir.poyecto.model;
 
-import java.time.LocalDateTime;
+import java.util.Date;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -48,14 +48,14 @@ public class Proyecto {
 
 	@Column(name = "ultima_actualizacion")
 	@Temporal(TemporalType.TIMESTAMP)
-	private LocalDateTime ultimaActualizacion;
+	private Date ultimaActualizacion;
 
 	private boolean destacado;
 
 	@PrePersist
 	@PreUpdate
 	public void prePersistOrUpdate() {
-		this.ultimaActualizacion = LocalDateTime.now();
+		this.ultimaActualizacion = new Date();
 	}
 
 }
