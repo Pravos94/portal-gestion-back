@@ -58,10 +58,10 @@ public class EmpleadoController {
 	}
 
 	@PutMapping("/edit/{id}")
-	public ResponseEntity<Empleado> editarEmpleado(@PathVariable Long id, @RequestBody EmpleadoDTO empleadoDTO) {
+	public ResponseEntity<Empleado> editarEmpleado(@PathVariable Long id, @RequestBody Empleado empleado) {
 
-		empleadoDTO.setId(id);
-		Empleado empleado = EmpleadoMapper.INSTANCE.toEntity(empleadoDTO);
+		//empleadoDTO.setId(id);
+		//Empleado empleado = EmpleadoMapper.INSTANCE.toEntity(empleadoDTO);
 
 		Empleado empleadoActualizado = empleadoRepository.save(empleado);
 
