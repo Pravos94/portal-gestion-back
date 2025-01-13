@@ -8,13 +8,16 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.unir.poyecto.model.Usuario;
 import com.unir.poyecto.repository.UsuarioRepository;
 
-@CrossOrigin(origins = "http://localhost:3000")
+//@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin()
 @RestController
 @RequestMapping("/api/usuario")
 public class UsuarioController {
@@ -30,12 +33,24 @@ public class UsuarioController {
 //
 //		return new ResponseEntity<List<Usuario>>(usuarios, HttpStatus.OK);
 //	}
-	
+
 	@GetMapping("/{id}")
-	public ResponseEntity<Usuario> obtenerEmpleado(@PathVariable Long id) {
+	public ResponseEntity<Usuario> obtenerUsuario(@PathVariable Long id) {
 
 		Optional<Usuario> usuario = usuarioRepository.findById(id);
 
 		return usuario.map(ResponseEntity::ok).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+	}
+
+	@PutMapping("/edit/{id}")
+	public ResponseEntity<Usuario> editarUsuario(@PathVariable Long id, @RequestBody Usuario usuario) {
+
+		// usuarioDTO.setId(id);
+		// Usuario usuario = UsuarioMapper.INSTANCE.toEntity(usuarioDTO);
+
+		Usuario usuaioActualizado = usuarioRepository.save(usuario);
+
+		return ResponseEntity.ok(usuaioActualizado);
+
 	}
 }

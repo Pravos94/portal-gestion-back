@@ -8,6 +8,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Lob;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
@@ -31,7 +33,7 @@ public class Curso {
 
 //	@Column(name = "tipo_foto")
 //	private String tipoFoto;
-	
+
 	@Lob
 	@Column(name = "foto")
 	private byte[] foto;
@@ -58,5 +60,11 @@ public class Curso {
 	private Date ultimaActualizacion;
 
 	private boolean destacado;
+
+	@PrePersist
+	@PreUpdate
+	public void prePersistOrUpdate() {
+		this.ultimaActualizacion = new Date();
+	}
 
 }

@@ -19,7 +19,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.unir.poyecto.model.Empleado;
 import com.unir.poyecto.repository.EmpleadoRepository;
 
-@CrossOrigin(origins = "http://localhost:3000")
+//@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin()
 @RestController
 @RequestMapping("/api/empleado")
 public class EmpleadoController {

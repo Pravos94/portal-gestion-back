@@ -20,7 +20,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.unir.poyecto.model.Proyecto;
 import com.unir.poyecto.repository.ProyectoRepository;
 
-@CrossOrigin(origins = "http://localhost:3000")
+//@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin()
 @RestController
 @RequestMapping("/api/proyecto")
 public class ProyectoController {

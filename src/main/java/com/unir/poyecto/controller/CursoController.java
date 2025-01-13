@@ -16,12 +16,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.unir.poyecto.dto.CursoDTO;
-import com.unir.poyecto.mapper.CursoMapper;
 import com.unir.poyecto.model.Curso;
 import com.unir.poyecto.repository.CursoRepository;
 
-@CrossOrigin(origins = "http://localhost:3000")
+//@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin()
 @RestController
 @RequestMapping("/api/curso")
 public class CursoController {
@@ -48,9 +47,9 @@ public class CursoController {
 	}
 
 	@PostMapping("/new")
-	public ResponseEntity<Curso> crearCurso(@RequestBody CursoDTO cursoDTO) {
+	public ResponseEntity<Curso> crearCurso(@RequestBody Curso curso) {
 
-		Curso curso = CursoMapper.INSTANCE.toEntity(cursoDTO);
+//		Curso curso = CursoMapper.INSTANCE.toEntity(cursoDTO);
 
 		Curso cursoGuardado = cursoRepository.save(curso);
 
@@ -58,10 +57,10 @@ public class CursoController {
 	}
 
 	@PutMapping("/edit/{id}")
-	public ResponseEntity<Curso> editarCurso(@PathVariable Long id, @RequestBody CursoDTO cursoDTO) {
+	public ResponseEntity<Curso> editarCurso(@PathVariable Long id, @RequestBody Curso curso) {
 
-		cursoDTO.setId(id);
-		Curso curso = CursoMapper.INSTANCE.toEntity(cursoDTO);
+//		cursoDTO.setId(id);
+//		Curso curso = CursoMapper.INSTANCE.toEntity(cursoDTO);
 
 		Curso cursoActualizado = cursoRepository.save(curso);
 
