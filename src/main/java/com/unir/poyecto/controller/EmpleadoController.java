@@ -18,6 +18,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.unir.poyecto.model.Empleado;
 import com.unir.poyecto.repository.EmpleadoRepository;
+import com.unir.poyecto.service.IUsuarioService;
+
+import jakarta.servlet.http.HttpSession;
 
 //@CrossOrigin(origins = "http://localhost:3000")
 @CrossOrigin()
@@ -28,53 +31,103 @@ public class EmpleadoController {
 	@Autowired
 	private EmpleadoRepository empleadoRepository;
 
+	@Autowired
+	private IUsuarioService usuarioService;
+
 	@GetMapping("/all")
-	public ResponseEntity<List<Empleado>> listarEmpleados() {
+	public ResponseEntity<?> listarEmpleados(HttpSession session) {
 
-		List<Empleado> empleados = empleadoRepository.findAll();
+		if (session != null && session.getAttribute("user") != null) {
+			Object roles = session.getAttribute("role");
 
-		return new ResponseEntity<>(empleados, HttpStatus.OK);
+			boolean tienePermiso = false;
+			tienePermiso = usuarioService.comprobarPermisos(roles, "OTROS_ROLES");
+
+			if (tienePermiso) {
+				List<Empleado> empleados = empleadoRepository.findAll();
+				return new ResponseEntity<>(empleados, HttpStatus.OK);
+			}
+			return ResponseEntity.status(HttpStatus.FORBIDDEN).body("No tiene permisos para obtener empleados");
+
+		} else {
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("No autorizado");
+		}
 	}
 
 	@GetMapping("/{id}")
-	public ResponseEntity<Empleado> obtenerEmpleado(@PathVariable Long id) {
+	public ResponseEntity<?> obtenerEmpleado(@PathVariable Long id, HttpSession session) {
+		if (session != null && session.getAttribute("user") != null) {
+			Object roles = session.getAttribute("role");
 
-		Optional<Empleado> empleado = empleadoRepository.findById(id);
+			boolean tienePermiso = false;
+			tienePermiso = usuarioService.comprobarPermisos(roles, "OTROS_ROLES");
 
-		return empleado.map(ResponseEntity::ok).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+			if (tienePermiso) {
+				Optional<Empleado> empleado = empleadoRepository.findById(id);
+				return empleado.map(ResponseEntity::ok).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+			}
+			return ResponseEntity.status(HttpStatus.FORBIDDEN).body("No tiene permisos para obtener empleados");
+		} else {
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("No autorizado");
+		}
 	}
 
 	@PostMapping("/new")
-	public ResponseEntity<Empleado> crearEmpleado(@RequestBody Empleado empleado) {
-//		public ResponseEntity<Empleado> crearEmpleado(@RequestBody EmpleadoDTO empleadoDTO) {
+	public ResponseEntity<?> crearEmpleado(@RequestBody Empleado empleado, HttpSession session) {
+		if (session != null && session.getAttribute("user") != null) {
+			Object roles = session.getAttribute("role");
 
-//		Empleado empleado = EmpleadoMapper.INSTANCE.toEntity(empleadoDTO);
+			boolean tienePermiso = false;
+			tienePermiso = usuarioService.comprobarPermisos(roles, "OTROS_ROLES");
 
-		Empleado empleadoGuardado = empleadoRepository.save(empleado);
-
-		return ResponseEntity.ok(empleadoGuardado);
+			if (tienePermiso) {
+				Empleado empleadoGuardado = empleadoRepository.save(empleado);
+				return ResponseEntity.ok(empleadoGuardado);
+			}
+			return ResponseEntity.status(HttpStatus.FORBIDDEN).body("No tiene permisos para crear empleados");
+		} else {
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("No autorizado");
+		}
 	}
 
 	@PutMapping("/edit/{id}")
-	public ResponseEntity<Empleado> editarEmpleado(@PathVariable Long id, @RequestBody Empleado empleado) {
+	public ResponseEntity<?> editarEmpleado(@PathVariable Long id, @RequestBody Empleado empleado,
+			HttpSession session) {
+		if (session != null && session.getAttribute("user") != null) {
+			Object roles = session.getAttribute("role");
 
-		//empleadoDTO.setId(id);
-		//Empleado empleado = EmpleadoMapper.INSTANCE.toEntity(empleadoDTO);
+			boolean tienePermiso = false;
+			tienePermiso = usuarioService.comprobarPermisos(roles, "OTROS_ROLES");
 
-		Empleado empleadoActualizado = empleadoRepository.save(empleado);
-
-		return ResponseEntity.ok(empleadoActualizado);
-
+			if (tienePermiso) {
+				Empleado empleadoActualizado = empleadoRepository.save(empleado);
+				return ResponseEntity.ok(empleadoActualizado);
+			}
+			return ResponseEntity.status(HttpStatus.FORBIDDEN).body("No tiene permisos para editar empleados");
+		} else {
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("No autorizado");
+		}
 	}
 
 	@DeleteMapping("/del/{id}")
-	public ResponseEntity<Void> eliminarEmpleado(@PathVariable Long id) {
-		if (empleadoRepository.existsById(id)) {
-			empleadoRepository.deleteById(id);
+	public ResponseEntity<?> eliminarEmpleado(@PathVariable Long id, HttpSession session) {
+		if (session != null && session.getAttribute("user") != null) {
+			Object roles = session.getAttribute("role");
 
-			return ResponseEntity.noContent().build();
+			boolean tienePermiso = false;
+			tienePermiso = usuarioService.comprobarPermisos(roles, "OTROS_ROLES");
+
+			if (tienePermiso) {
+				if (empleadoRepository.existsById(id)) {
+					empleadoRepository.deleteById(id);
+					return ResponseEntity.noContent().build();
+				} else {
+					return ResponseEntity.notFound().build();
+				}
+			}
+			return ResponseEntity.status(HttpStatus.FORBIDDEN).body("No tiene permisos para eliminar empleados");
 		} else {
-			return ResponseEntity.notFound().build();
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("No autorizado");
 		}
 	}
 }

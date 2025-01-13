@@ -18,6 +18,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.unir.poyecto.model.Curso;
 import com.unir.poyecto.repository.CursoRepository;
+import com.unir.poyecto.service.IUsuarioService;
+
+import jakarta.servlet.http.HttpSession;
 
 //@CrossOrigin(origins = "http://localhost:3000")
 @CrossOrigin()
@@ -28,54 +31,101 @@ public class CursoController {
 	@Autowired
 	private CursoRepository cursoRepository;
 
+	@Autowired
+	private IUsuarioService usuarioService;
+
 	@GetMapping("/all")
-	public ResponseEntity<List<Curso>> listarCursos() {
+	public ResponseEntity<?> listarCursos(HttpSession session) {
+		if (session != null && session.getAttribute("user") != null) {
+			Object roles = session.getAttribute("role");
 
-		List<Curso> cursos = cursoRepository.findAll();
+			boolean tienePermiso = false;
+			tienePermiso = usuarioService.comprobarPermisos(roles, "OTROS_ROLES");
 
-		return cursos.isEmpty() ? new ResponseEntity<>(cursos, HttpStatus.NOT_FOUND)
-				: new ResponseEntity<>(cursos, HttpStatus.OK);
-
+			if (tienePermiso) {
+				List<Curso> cursos = cursoRepository.findAll();
+				return cursos.isEmpty() ? new ResponseEntity<>(cursos, HttpStatus.NOT_FOUND)
+						: new ResponseEntity<>(cursos, HttpStatus.OK);
+			}
+			return ResponseEntity.status(HttpStatus.FORBIDDEN).body("No tiene permisos para listar cursos");
+		} else {
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("No autorizado");
+		}
 	}
-	
+
 	@GetMapping("/{id}")
-	public ResponseEntity<Curso> obtenerCurso(@PathVariable Long id) {
+	public ResponseEntity<?> obtenerCurso(@PathVariable Long id, HttpSession session) {
+		if (session != null && session.getAttribute("user") != null) {
+			Object roles = session.getAttribute("role");
 
-		Optional<Curso> proyecto = cursoRepository.findById(id);
+			boolean tienePermiso = false;
+			tienePermiso = usuarioService.comprobarPermisos(roles, "OTROS_ROLES");
 
-		return proyecto.map(ResponseEntity::ok).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+			if (tienePermiso) {
+				Optional<Curso> curso = cursoRepository.findById(id);
+				return curso.map(ResponseEntity::ok).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+			}
+			return ResponseEntity.status(HttpStatus.FORBIDDEN).body("No tiene permisos para obtener cursos");
+		} else {
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("No autorizado");
+		}
 	}
 
 	@PostMapping("/new")
-	public ResponseEntity<Curso> crearCurso(@RequestBody Curso curso) {
+	public ResponseEntity<?> crearCurso(@RequestBody Curso curso, HttpSession session) {
+		if (session != null && session.getAttribute("user") != null) {
+			Object roles = session.getAttribute("role");
 
-//		Curso curso = CursoMapper.INSTANCE.toEntity(cursoDTO);
+			boolean tienePermiso = false;
+			tienePermiso = usuarioService.comprobarPermisos(roles, "OTROS_ROLES");
 
-		Curso cursoGuardado = cursoRepository.save(curso);
-
-		return ResponseEntity.ok(cursoGuardado);
+			if (tienePermiso) {
+				Curso cursoGuardado = cursoRepository.save(curso);
+				return ResponseEntity.ok(cursoGuardado);
+			}
+			return ResponseEntity.status(HttpStatus.FORBIDDEN).body("No tiene permisos para crear cursos");
+		} else {
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("No autorizado");
+		}
 	}
 
 	@PutMapping("/edit/{id}")
-	public ResponseEntity<Curso> editarCurso(@PathVariable Long id, @RequestBody Curso curso) {
+	public ResponseEntity<?> editarCurso(@PathVariable Long id, @RequestBody Curso curso, HttpSession session) {
+		if (session != null && session.getAttribute("user") != null) {
+			Object roles = session.getAttribute("role");
 
-//		cursoDTO.setId(id);
-//		Curso curso = CursoMapper.INSTANCE.toEntity(cursoDTO);
+			boolean tienePermiso = false;
+			tienePermiso = usuarioService.comprobarPermisos(roles, "OTROS_ROLES");
 
-		Curso cursoActualizado = cursoRepository.save(curso);
-
-		return ResponseEntity.ok(cursoActualizado);
-
-	}
-	
-	@DeleteMapping("/del/{id}")
-	public ResponseEntity<Void> eliminarCurso(@PathVariable Long id) {
-		if (cursoRepository.existsById(id)) {
-			cursoRepository.deleteById(id);
-
-			return ResponseEntity.noContent().build();
+			if (tienePermiso) {
+				Curso cursoActualizado = cursoRepository.save(curso);
+				return ResponseEntity.ok(cursoActualizado);
+			}
+			return ResponseEntity.status(HttpStatus.FORBIDDEN).body("No tiene permisos para editar cursos");
 		} else {
-			return ResponseEntity.notFound().build();
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("No autorizado");
+		}
+	}
+
+	@DeleteMapping("/del/{id}")
+	public ResponseEntity<?> eliminarCurso(@PathVariable Long id, HttpSession session) {
+		if (session != null && session.getAttribute("user") != null) {
+			Object roles = session.getAttribute("role");
+
+			boolean tienePermiso = false;
+			tienePermiso = usuarioService.comprobarPermisos(roles, "OTROS_ROLES");
+
+			if (tienePermiso) {
+				if (cursoRepository.existsById(id)) {
+					cursoRepository.deleteById(id);
+					return ResponseEntity.noContent().build();
+				} else {
+					return ResponseEntity.notFound().build();
+				}
+			}
+			return ResponseEntity.status(HttpStatus.FORBIDDEN).body("No tiene permisos para eliminar cursos");
+		} else {
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("No autorizado");
 		}
 	}
 }
