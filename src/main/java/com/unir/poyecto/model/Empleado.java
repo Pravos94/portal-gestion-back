@@ -1,5 +1,6 @@
 package com.unir.poyecto.model;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import jakarta.persistence.Column;
@@ -20,7 +21,12 @@ import lombok.NoArgsConstructor;
 @Data
 @Entity
 @Table(name = "empleados")
-public class Empleado {
+public class Empleado  implements Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -1090670111992923494L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -1,11 +1,19 @@
 package com.unir.poyecto.service;
 
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.unir.poyecto.model.Curso;
+import com.unir.poyecto.model.Proyecto;
 import com.unir.poyecto.model.Usuario;
+import com.unir.poyecto.model.UsuarioCurso;
+import com.unir.poyecto.model.UsuarioProyecto;
+import com.unir.poyecto.repository.UsuarioCursoRepository;
+import com.unir.poyecto.repository.UsuarioProyectoRepository;
 import com.unir.poyecto.repository.UsuarioRepository;
 
 @Service
@@ -13,6 +21,12 @@ public class UsuarioService implements IUsuarioService {
 
 	@Autowired
 	private UsuarioRepository usuarioRepository;
+
+	@Autowired
+	private UsuarioCursoRepository usuarioCursoRepository;
+
+	@Autowired
+	private UsuarioProyectoRepository usuarioProyectoRepository;
 
 	// '6', 'administracion' '5', 'asignacion' '2', 'creacion' '3', 'edicion' '4',
 	// 'eliminacion' '1', 'visualizacion'
@@ -57,5 +71,17 @@ public class UsuarioService implements IUsuarioService {
 //		return tienePermiso;
 
 		return true; // HASTA SOLUCIONARLO
+	}
+
+	@Override
+	public List<Curso> obtenerCursosByUser(Long userId) {
+		List<UsuarioCurso> actividades = usuarioCursoRepository.findByUsuarioId(userId);
+		return actividades.stream().map(UsuarioCurso::getCurso).collect(Collectors.toList());
+	}
+
+	@Override
+	public List<Proyecto> obtenerProyectosByUser(Long userId) {
+		List<UsuarioProyecto> actividades = usuarioProyectoRepository.findByUsuarioId(userId);
+		return actividades.stream().map(UsuarioProyecto::getProyecto).collect(Collectors.toList());
 	}
 }

@@ -1,5 +1,6 @@
 package com.unir.poyecto.controller;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +16,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.unir.poyecto.dto.UsuarioDTO;
-import com.unir.poyecto.model.Role;
+import com.unir.poyecto.model.Curso;
+import com.unir.poyecto.model.Proyecto;
 import com.unir.poyecto.model.Usuario;
 import com.unir.poyecto.repository.UsuarioRepository;
 import com.unir.poyecto.service.IUsuarioService;
@@ -43,7 +45,8 @@ public class UsuarioController {
 		if (user != null && user.getUsername().equals(userCredentials.getUsername())
 				&& user.getContrasena().equals(userCredentials.getContrasena())) {
 			HttpSession session = request.getSession();
-			session.setAttribute("user", userCredentials.getUsername());
+			session.setAttribute("userId", user.getId());
+			session.setAttribute("user", user.getUsername());
 			session.setAttribute("role", user.getRoles());
 			return ResponseEntity.ok("Login exitoso");
 		} else {
@@ -91,47 +94,87 @@ public class UsuarioController {
 	public ResponseEntity<?> obtenerUsuario(@PathVariable Long id, HttpSession session) {
 
 		if (session != null && session.getAttribute("user") != null) {
-			Role role = (Role) session.getAttribute("role");
+			Object roles = session.getAttribute("role");
 
-			switch (role.getId().intValue()) {
-			case 1:
-			case 2:
-			case 3:
-			case 4:
-			case 5:
-			case 6:
+			boolean tienePermiso = false;
+			tienePermiso = usuarioService.comprobarPermisos(roles, "OTROS_ROLES");
+
+			if (tienePermiso) {
 				Optional<Usuario> usuario = usuarioRepository.findById(id);
 				return usuario.map(ResponseEntity::ok).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
-
-			default:
-				return ResponseEntity.status(HttpStatus.FORBIDDEN).body("No tiene permisos para obtener usuario");
 			}
-
+			return ResponseEntity.status(HttpStatus.FORBIDDEN).body("No tiene permisos para obtener usuario");
 		} else {
 			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("No autorizado");
 		}
-
 	}
 
 	@PutMapping("/edit/{id}")
 	public ResponseEntity<?> editarUsuario(@PathVariable Long id, @RequestBody Usuario usuario, HttpSession session) {
 		if (session != null && session.getAttribute("user") != null) {
-			Role role = (Role) session.getAttribute("role");
+			Object roles = session.getAttribute("role");
 
-			switch (role.getId().intValue()) {
-			case 1:
-			case 2:
-			case 3:
-			case 4:
-			case 5:
-			case 6:
+			boolean tienePermiso = false;
+			tienePermiso = usuarioService.comprobarPermisos(roles, "OTROS_ROLES");
+
+			if (tienePermiso) {
 				Usuario usuarioActualizado = usuarioRepository.save(usuario);
 				return ResponseEntity.ok(usuarioActualizado);
-			default:
-				return ResponseEntity.status(HttpStatus.FORBIDDEN).body("No tiene permisos para editar usuarios");
 			}
+			return ResponseEntity.status(HttpStatus.FORBIDDEN).body("No tiene permisos para editar usuarios");
 		} else {
 			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("No autorizado");
 		}
 	}
+
+	@GetMapping("/mis-cursos")
+	public ResponseEntity<?> misCursos(HttpSession session) {
+		Long userId = (Long) session.getAttribute("userId");
+
+		if (session != null && session.getAttribute("user") != null) {
+			Object roles = session.getAttribute("role");
+
+			boolean tienePermiso = false;
+			tienePermiso = usuarioService.comprobarPermisos(roles, "OTROS_ROLES");
+
+			if (tienePermiso) {
+				List<Curso> listCursos = usuarioService.obtenerCursosByUser(userId);
+
+				if (listCursos.isEmpty()) {
+					return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+				} else {
+					return new ResponseEntity<>(listCursos, HttpStatus.OK);
+				}
+			}
+			return ResponseEntity.status(HttpStatus.FORBIDDEN).body("No tiene permisos para obtener usuario");
+		} else {
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("No autorizado");
+		}
+	}
+
+	@GetMapping("/mis-proyectos")
+	public ResponseEntity<?> misProyectos(HttpSession session) {
+		Long userId = (Long) session.getAttribute("userId");
+
+		if (session != null && session.getAttribute("user") != null) {
+			Object roles = session.getAttribute("role");
+
+			boolean tienePermiso = false;
+			tienePermiso = usuarioService.comprobarPermisos(roles, "OTROS_ROLES");
+
+			if (tienePermiso) {
+				List<Proyecto> listProyectos = usuarioService.obtenerProyectosByUser(userId);
+
+				if (listProyectos.isEmpty()) {
+					return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+				} else {
+					return new ResponseEntity<>(listProyectos, HttpStatus.OK);
+				}
+			}
+			return ResponseEntity.status(HttpStatus.FORBIDDEN).body("No tiene permisos para obtener usuario");
+		} else {
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("No autorizado");
+		}
+	}
+
 }

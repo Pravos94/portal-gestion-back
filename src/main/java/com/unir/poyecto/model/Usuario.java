@@ -1,5 +1,6 @@
 package com.unir.poyecto.model;
 
+import java.io.Serializable;
 import java.util.Set;
 
 import jakarta.persistence.Column;
@@ -23,7 +24,12 @@ import lombok.Setter;
 @Getter
 @Setter
 @Table(name = "usuarios")
-public class Usuario {
+public class Usuario  implements Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 3856883964075550894L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
