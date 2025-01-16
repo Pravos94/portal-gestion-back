@@ -137,4 +137,48 @@ public class ProyectoController {
 			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("No autorizado");
 		}
 	}
+
+	@DeleteMapping("/del2/{id}")
+	public ResponseEntity<?> eliminarProyecto2(@PathVariable Long id, HttpSession session) {
+		if (session != null && session.getAttribute("user") != null) {
+			Object roles = session.getAttribute("role");
+
+			boolean tienePermiso = false;
+			tienePermiso = usuarioService.comprobarPermisos(roles, "OTROS_ROLES");
+
+			if (tienePermiso) {
+				if (proyectoRepository.existsById(id)) {
+					proyectoRepository.deleteById(id);
+					return ResponseEntity.noContent().build();
+				} else {
+					return ResponseEntity.notFound().build();
+				}
+			}
+			return ResponseEntity.status(HttpStatus.FORBIDDEN).body("No tiene permisos para eliminar proyectos");
+		} else {
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("No autorizado");
+		}
+	}
+
+	@DeleteMapping("/del4/{id}")
+	public ResponseEntity<?> eliminarProyecto3(@PathVariable Long id, HttpSession session) {
+		if (session != null && session.getAttribute("user") != null) {
+			Object roles = session.getAttribute("role");
+
+			boolean tienePermiso = false;
+			tienePermiso = usuarioService.comprobarPermisos(roles, "OTROS_ROLES");
+
+			if (tienePermiso) {
+				if (proyectoRepository.existsById(id)) {
+					proyectoRepository.deleteById(id);
+					return ResponseEntity.noContent().build();
+				} else {
+					return ResponseEntity.notFound().build();
+				}
+			}
+			return ResponseEntity.status(HttpStatus.FORBIDDEN).body("No tiene permisos para eliminar proyectos");
+		} else {
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("No autorizado");
+		}
+	}
 }

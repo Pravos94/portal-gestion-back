@@ -1,9 +1,9 @@
 com\unir\poyecto\repository\UsuarioRepository.class
-com\unir\poyecto\model\UsuarioCurso$TipoActividad.class
 com\unir\poyecto\model\Role.class
 com\unir\poyecto\controller\CursoController.class
 com\unir\poyecto\model\Empleado.class
 com\unir\poyecto\controller\ProyectoController.class
+com\unir\poyecto\repository\UsuarioProyectoRepository.class
 com\unir\poyecto\config\WebConfig.class
 com\unir\poyecto\mapper\CursoMapper.class
 com\unir\poyecto\PortalGestionBackApplication.class
@@ -18,12 +18,12 @@ com\unir\poyecto\model\Curso.class
 com\unir\poyecto\repository\ProyectoRepository.class
 com\unir\poyecto\model\Proyecto.class
 com\unir\poyecto\dto\UsuarioDTO.class
+com\unir\poyecto\model\UsuarioProyecto.class
 com\unir\poyecto\mapper\EmpleadoMapper.class
 com\unir\poyecto\model\UsuarioCurso.class
 com\unir\poyecto\repository\UsuarioCursoRepository.class
 com\unir\poyecto\model\Usuario.class
 com\unir\poyecto\repository\CursoRepository.class
-com\unir\poyecto\model\UsuarioCurso$Estado.class
 com\unir\poyecto\dto\CursoDTO.class
 com\unir\poyecto\service\CustomUserDetailsService.class
 com\unir\poyecto\repository\EmpleadoRepository.class
