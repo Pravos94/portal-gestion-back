@@ -19,6 +19,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.unir.poyecto.model.Proyecto;
 import com.unir.poyecto.repository.ProyectoRepository;
+import com.unir.poyecto.service.IUsuarioService;
+
+import jakarta.servlet.http.HttpSession;
 
 //@CrossOrigin(origins = "http://localhost:3000")
 @CrossOrigin()
@@ -29,56 +32,109 @@ public class ProyectoController {
 	@Autowired
 	private ProyectoRepository proyectoRepository;
 
+	@Autowired
+	private IUsuarioService usuarioService;
+
+	@SuppressWarnings("unlikely-arg-type")
 	@GetMapping("/all")
-	public ResponseEntity<List<Proyecto>> listarProyectos() {
-		List<Proyecto> proyectos = proyectoRepository.findAll();
-		return proyectos.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(proyectos);
+	public ResponseEntity<?> listarProyectos(HttpSession session) {
+		List<Proyecto> proyectos = null;
+
+		if (session != null && session.getAttribute("user") != null) {
+			Object roles = session.getAttribute("role");
+
+			boolean tienePermiso = false;
+			tienePermiso = usuarioService.comprobarPermisos(roles, "OTROS_ROLES");
+
+			proyectos = tienePermiso ? proyectoRepository.findAll() : null;
+
+		} else {
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("No autorizado");
+		}
+
+		return (proyectos == null || proyectos.isEmpty()) ? ResponseEntity.noContent().build()
+				: ResponseEntity.ok(proyectos);
 	}
 
 	@GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Proyecto> obtenerProyecto(@PathVariable Long id) {
+	public ResponseEntity<?> obtenerProyecto(@PathVariable Long id, HttpSession session) {
 
-		Optional<Proyecto> proyecto = proyectoRepository.findById(id);
+		if (session != null && session.getAttribute("user") != null) {
+			Object roles = session.getAttribute("role");
 
-		return proyecto.map(ResponseEntity::ok).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+			boolean tienePermiso = false;
+			tienePermiso = usuarioService.comprobarPermisos(roles, "OTROS_ROLES");
+
+			if (tienePermiso) {
+				Optional<Proyecto> proyecto = proyectoRepository.findById(id);
+				return proyecto.map(ResponseEntity::ok).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+			}
+			return ResponseEntity.status(HttpStatus.FORBIDDEN).body("No tiene permisos para obtener proyectos");
+
+		} else {
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("No autorizado");
+		}
 	}
 
 	@PostMapping(value = "/new", consumes = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Proyecto> crearProyecto(@RequestBody Proyecto proyecto) {
-//		public ResponseEntity<Proyecto> crearProyecto(@RequestBody ProyectoDTO proyectoDTO) {
+	public ResponseEntity<?> crearProyecto(@RequestBody Proyecto proyecto, HttpSession session) {
+		if (session != null && session.getAttribute("user") != null) {
+			Object roles = session.getAttribute("role");
 
-//		Proyecto proyecto = ProyectoMapper.INSTANCE.toEntity(proyectoDTO);
-		
-//	    if (proyecto.getFoto() != null) {
-//            byte[] fotoBytes = Base64.getDecoder().decode(proyecto.getFoto());
-//            proyecto.setFoto(fotoBytes);
-//        }
+			boolean tienePermiso = false;
+			tienePermiso = usuarioService.comprobarPermisos(roles, "OTROS_ROLES");
 
-		Proyecto proyectoGuardado = proyectoRepository.save(proyecto);
+			if (tienePermiso) {
 
-		return ResponseEntity.ok(proyectoGuardado);
+				Proyecto proyectoGuardado = proyectoRepository.save(proyecto);
+				return ResponseEntity.ok(proyectoGuardado);
+			}
+			return ResponseEntity.status(HttpStatus.FORBIDDEN).body("No tiene permisos para crear proyectos");
+		} else
+
+		{
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("No autorizado");
+		}
 	}
 
 	@PutMapping("/edit/{id}")
-	public ResponseEntity<Proyecto> editarProyecto(@PathVariable Long id, @RequestBody Proyecto proyecto) {
+	public ResponseEntity<?> editarProyecto(@PathVariable Long id, @RequestBody Proyecto proyecto,
+			HttpSession session) {
+		if (session != null && session.getAttribute("user") != null) {
+			Object roles = session.getAttribute("role");
 
-//		proyectoDTO.setId(id);
-//		Proyecto proyecto = ProyectoMapper.INSTANCE.toEntity(proyectoDTO);
+			boolean tienePermiso = false;
+			tienePermiso = usuarioService.comprobarPermisos(roles, "OTROS_ROLES");
 
-		Proyecto proyectoActualizado = proyectoRepository.save(proyecto);
-
-		return ResponseEntity.ok(proyectoActualizado);
-
+			if (tienePermiso) {
+				Proyecto proyectoActualizado = proyectoRepository.save(proyecto);
+				return ResponseEntity.ok(proyectoActualizado);
+			}
+			return ResponseEntity.status(HttpStatus.FORBIDDEN).body("No tiene permisos para editar proyectos");
+		} else {
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("No autorizado");
+		}
 	}
 
 	@DeleteMapping("/del/{id}")
-	public ResponseEntity<Void> eliminarProyecto(@PathVariable Long id) {
-		if (proyectoRepository.existsById(id)) {
-			proyectoRepository.deleteById(id);
+	public ResponseEntity<?> eliminarProyecto(@PathVariable Long id, HttpSession session) {
+		if (session != null && session.getAttribute("user") != null) {
+			Object roles = session.getAttribute("role");
 
-			return ResponseEntity.noContent().build();
+			boolean tienePermiso = false;
+			tienePermiso = usuarioService.comprobarPermisos(roles, "OTROS_ROLES");
+
+			if (tienePermiso) {
+				if (proyectoRepository.existsById(id)) {
+					proyectoRepository.deleteById(id);
+					return ResponseEntity.noContent().build();
+				} else {
+					return ResponseEntity.notFound().build();
+				}
+			}
+			return ResponseEntity.status(HttpStatus.FORBIDDEN).body("No tiene permisos para eliminar proyectos");
 		} else {
-			return ResponseEntity.notFound().build();
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("No autorizado");
 		}
 	}
 }
