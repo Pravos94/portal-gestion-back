@@ -23,7 +23,7 @@ import lombok.NoArgsConstructor;
 @Data
 @Entity
 @Table(name = "proyectos")
-public class Proyecto  implements Serializable {
+public class Proyecto implements Serializable {
 
 	/**
 	 * 
@@ -60,6 +60,7 @@ public class Proyecto  implements Serializable {
 	private Date ultimaActualizacion;
 
 	private boolean destacado;
+	private boolean estrellas;
 
 	@PrePersist
 	@PreUpdate
