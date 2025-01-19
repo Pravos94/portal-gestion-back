@@ -21,12 +21,12 @@ import lombok.NoArgsConstructor;
 @Data
 @Entity
 @Table(name = "empleados")
-public class Empleado  implements Serializable {
+public class Empleado implements Serializable {
 
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = -1090670111992923494L;
+	private static final long serialVersionUID = 7131667812567029132L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -56,5 +56,12 @@ public class Empleado  implements Serializable {
 	@Lob
 	@Column(name = "foto")
 	private byte[] foto;
+
+	private String perfil;
+	private String experiencia;
+	private String conocimientos;
+	private String proyectos;
+	private String nivel;
+	private Integer estrellas;
 
 }

@@ -1,8 +1,5 @@
 com\unir\poyecto\repository\UsuarioRepository.class
-<<<<<<< HEAD
-=======
 com\unir\poyecto\model\Solicitud.class
->>>>>>> 708cf753f829565b3edc661b0da7ce2be295f0c6
 com\unir\poyecto\model\Role.class
 com\unir\poyecto\service\EmailService.class
 com\unir\poyecto\controller\CursoController.class

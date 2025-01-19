@@ -1,5 +1,6 @@
 package com.unir.poyecto.service;
 
+import java.util.Date;
 import java.util.List;
 
 import com.unir.poyecto.model.Curso;
@@ -15,5 +16,11 @@ public interface IUsuarioService {
 	List<Curso> obtenerCursosByUser(Long userId);
 
 	List<Proyecto> obtenerProyectosByUser(Long userId);
+
+	void asignarEmpleadoToProyecto(Long idEmpleado, Long idProyecto);
+
+	void solicitarProyecto(Long idUsuario, Long idProyecto);
+
+	Date isSolicitadoProyecto(Long idUsuario, Long idProyecto);
 
 }
