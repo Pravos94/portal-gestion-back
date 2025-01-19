@@ -1,5 +1,6 @@
 package com.unir.poyecto.controller;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -130,4 +131,65 @@ public class EmpleadoController {
 			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("No autorizado");
 		}
 	}
+
+	@PostMapping("/asignar-a-proyecto/{idProyecto}")
+	public ResponseEntity<?> asignarEmpleadoToProyecto(@PathVariable Long idProyecto, HttpSession session) {
+		Long userId = (Long) session.getAttribute("userId");
+
+		if (session != null && session.getAttribute("user") != null) {
+			Object roles = session.getAttribute("role");
+
+			boolean tienePermiso = false;
+			tienePermiso = usuarioService.comprobarPermisos(roles, "OTROS_ROLES");
+
+			if (tienePermiso) {
+				usuarioService.asignarEmpleadoToProyecto(userId, idProyecto);
+				return ResponseEntity.ok().build();
+			}
+			return ResponseEntity.status(HttpStatus.FORBIDDEN).body("No tiene permisos para asignar proyectos");
+		} else {
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("No autorizado");
+		}
+	}
+
+	@PostMapping("/solicitar-proyecto/{idProyecto}")
+	public ResponseEntity<?> solicitarProyecto(@PathVariable Long idProyecto, HttpSession session) {
+		Long userId = (Long) session.getAttribute("userId");
+
+		if (session != null && session.getAttribute("user") != null) {
+			Object roles = session.getAttribute("role");
+
+			boolean tienePermiso = false;
+			tienePermiso = usuarioService.comprobarPermisos(roles, "OTROS_ROLES");
+
+			if (tienePermiso) {
+				usuarioService.solicitarProyecto(userId, idProyecto);
+				return ResponseEntity.ok().build();
+			}
+			return ResponseEntity.status(HttpStatus.FORBIDDEN).body("No tiene permisos para asignar proyectos");
+		} else {
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("No autorizado");
+		}
+	}
+
+	@GetMapping("/proyecto-asignado/{idProyecto}")
+	public ResponseEntity<?> isSolicitadoProyecto(@PathVariable Long idProyecto, HttpSession session) {
+		Long userId = (Long) session.getAttribute("userId");
+
+		if (session != null && session.getAttribute("user") != null) {
+			Object roles = session.getAttribute("role");
+
+			boolean tienePermiso = false;
+			tienePermiso = usuarioService.comprobarPermisos(roles, "OTROS_ROLES");
+
+			if (tienePermiso) {
+				Date fecha = usuarioService.isSolicitadoProyecto(userId, idProyecto);
+				return ResponseEntity.ok(fecha);
+			}
+			return ResponseEntity.status(HttpStatus.FORBIDDEN).body("No tiene permisos para asignar proyectos");
+		} else {
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("No autorizado");
+		}
+	}
+
 }
