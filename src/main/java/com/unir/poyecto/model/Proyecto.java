@@ -60,7 +60,7 @@ public class Proyecto implements Serializable {
 	private Date ultimaActualizacion;
 
 	private boolean destacado;
-	private boolean estrellas;
+	private Integer estrellas;
 
 	@PrePersist
 	@PreUpdate
